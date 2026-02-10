@@ -1,0 +1,9 @@
+
+#######
+LICENSE
+#######
+
+Grants permission to run the repeatability package as part of the CAV 2026 Artifact Evaluation.
+
+This repeatability package requires a MATLAB R2024b license (license server (preferred) or license file).
+Please see README.md for installation details.

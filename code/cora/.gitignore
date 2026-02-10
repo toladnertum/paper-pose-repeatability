@@ -1,0 +1,56 @@
+# exclude autosave files
+*.asv
+*.m~
+*.txt~
+
+# exclude generated files
+generated_*
+models/auxiliary/*
+**/+CustomLayers
+**/+DLT_CustomLayers
+**/website_*.html
+
+# explude files from installCORA 
+# (in case some installs tbxmanager into the CORA folder)
+**/tbxmanager
+**/startup.m
+
+# exclude from from general cora conversions
+models/CoraConverted/*
+# exclude files from power systems conversion
+models/powerSystemsConverted/*
+# exclude files from spaceex conversion
+models/SpaceExConverted/*
+
+/.project
+
+# exclude latex generated files
+**/*.aux
+**/*.auxlock
+**/*.bbl
+**/*.blg
+**/*.dvi
+**/*.log
+**/*.out
+manual/*.pdf
+**/*.ps
+**/*.toc
+**/*.synctex.gz
+**/*-eps-converted-to.pdf
+**/*.synctex(busy)
+
+manual/figures/externalize/**/*.dpth
+manual/figures/externalize/**/*.log
+manual/figures/externalize/**/*.md5
+
+*/.idea
+manual/manual.iml
+
+# for MAC users
+**/.DS_Store
+
+# exclude folders in workspace
+workspace/*
+
+# CORA release
+global/functions/release/commitHistory.txt

@@ -1,0 +1,67 @@
+function I = interval(cZ)
+% interval - over-approximate a constrained zonotope object with an
+%    axis-aligned interval (bounding box)
+%
+% Syntax:
+%    I = interval(cZ)
+%
+% Inputs:
+%    cZ - conZonotope object
+%
+% Outputs:
+%    I - interval object
+%
+% Example: 
+%    Z = [0 1 0 1;0 1 2 -1];
+%    A = [-2 1 -1]; b = 2;
+%    cZ = conZonotope(Z,A,b);
+%    I = interval(cZ);
+% 
+%    figure; hold on;
+%    plot(cZ); plot(I);
+%
+% Other m-files required: none
+% Subfunctions: none
+% MAT-files required: none
+%
+% See also: none
+
+% Authors:       Niklas Kochdumper, Mark Wetzlinger
+% Written:       13-May-2018
+% Last update:   23-February-2024 (MW, conversion of empty set)
+% Last revision: ---
+
+% ------------------------------ BEGIN CODE -------------------------------
+
+if isempty(cZ.A)
+    % no constraints -> call zonotope method    
+    I = interval(zonotope(cZ.c,cZ.G));
+    return
+end
+
+% case with constraints 
+n = dim(cZ);
+I = interval.origin(n);
+
+% remove the trivial constraint 0*beta = 0
+cZ = compact_(cZ,'zeros',eps);
+
+% loop over all dimensions
+for i = 1:n
+    dir = unitvector(i,n);
+
+    % calculate exact bounds by solving a linear program
+    lb = supportFunc_(cZ,dir,'lower');
+    if lb == Inf
+        % empty
+        I = interval.empty(n);
+        return
+    end
+    ub = supportFunc_(cZ,dir,'upper');
+    I(i) = interval(lb,ub);
+    % we do not need to check for emptiness here since this is already
+    % covered by the check for 'lower' above
+    
+end
+
+% ------------------------------ END OF CODE ------------------------------

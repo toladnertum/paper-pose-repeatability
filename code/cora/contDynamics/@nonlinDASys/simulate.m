@@ -1,0 +1,94 @@
+function [t,z,ind] = simulate(nlnsysDA,params,varargin)
+% simulate - simulates the system within a location
+%
+% Syntax:
+%    [t,z] = simulate(nlnsysDA,params)
+%    [t,z,ind] = simulate(nlnsysDA,params,options)
+%    [t,z,ind,y] = simulate(nlnsysDA,params,options)
+%
+% Inputs:
+%    nlnsysDA - nonlinDASys object
+%    params - struct containing the parameters for the simulation
+%       .tStart: initial time
+%       .tFinal: final time
+%       .x0: initial point
+%       .y0guess: 
+%       .u: piecewise constant input signal u(t) specified as a matrix
+%           for which the number of rows is identical to the number of
+%           system input
+%    options - ODE45 options (for hybrid systems)
+%
+% Outputs:
+%    t - time vector
+%    z - extended state vector (dynamic and algebraic state variables)
+%    ind - returns the event which has been detected
+%    y - output vector
+%
+% Example:
+%    -
+%
+% Other m-files required: none
+% Subfunctions: none
+% MAT-files required: none
+%
+% See also: none
+
+% Authors:       Matthias Althoff
+% Written:       03-May-2007 
+% Last update:   12-March-2008
+%                19-August-2016
+%                08-May-2020 (MW, update interface)
+%                28-August-2025 (LL, transpose t and z)
+% Last revision: ---
+
+% ------------------------------ BEGIN CODE -------------------------------
+
+if nargout == 4
+    CORAwarning('CORA:contDynamics',...
+        "Output trajectories not supported for class nonlinDASys!");
+    y = [];
+end
+
+% specify mass matrix
+M = diag([ones(1,nlnsysDA.nrOfDims),zeros(1,nlnsysDA.nrOfConstraints)]);
+
+% add mass matrix to the options struct
+if nargin > 2
+   options = varargin{1}; 
+   options = odeset(options, 'Mass', M, 'MStateDependence', 'none');
+else
+   options = odeset('Mass', M, 'MStateDependence', 'none');
+end
+options = odeset(options,'RelTol',1e-7,'AbsTol',1e-10,'NormControl','on');
+
+% initial state is combination of dynamic and algebraic state variables
+if length(params.x0) == (nlnsysDA.nrOfDims + nlnsysDA.nrOfConstraints)
+    z0 = params.x0;
+else
+    %extract dynamic and algebraic initial state, as well as the input
+    y0 = params.y0guess;
+    %ensure consistent initial state
+    y0 = consistentInitialState(nlnsysDA, params.x0, y0, params.u);
+    %update combined initial state
+    z0 = [params.x0;y0];
+end
+
+% set tStart
+if ~isfield(params,'tStart')
+    params.tStart = 0;
+end
+
+try
+    [t,z,~,~,ind] = ode15s(getfcn(nlnsysDA,params),...
+        [params.tStart,params.tFinal],z0,options);
+    %[t,z,te,xe,index] = ode23tb(getfcn(nlnsysDA,params),...
+    %   [params.tStart,params.tFinal],z0,options);
+catch
+    [t,z] = ode15s(getfcn(nlnsysDA,params),[params.tStart,params.tFinal],z0,options);
+    %[t,z] = ode23tb(getfcn(nlnsysDA,params),[params.tStart,params.tFinal],z0,options);
+    ind=[];
+end
+t = t';
+z = z';
+
+% ------------------------------ END OF CODE ------------------------------

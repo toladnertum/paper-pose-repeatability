@@ -1,0 +1,145 @@
+{
+  "_schemaVersion": "1.0.0",
+
+  "neuralNetwork.evaluate":
+  {
+     "inputs":
+     [
+        {"name":"obj", "kind":"required", "type":["neuralNetwork"], "purpose":"neural network"},
+        {"name":"input", "kind":"required", "type":["numeric", "interval", "zonotope", "polyZonotope", "taylm", "conZonotope"], "purpose":"input"},
+        {"name":"options", "kind":"ordered", "type":["struct"], "purpose":"network evaluation options in options.nn"},
+        {"name":"idxLayer", "kind":"ordered", "type":["numeric", "vector"], "purpose":"indices of layers that should be evaluated"}
+     ],
+     "outputs": [
+         {"name":"output", "type":["inferredFrom=input"]}
+     ]
+  },
+
+  "neuralNetwork.refine":
+  {
+     "inputs":
+     [
+        {"name":"obj", "kind":"required", "type":["neuralNetwork"], "purpose":"neuralNetwork"},
+        {"name":"max_order", "kind":"ordered", "type":["numeric"], "purpose":"maximum refinement order"},
+        {"name":"type", "kind":"ordered", "type":["char", "choices={'layer','neuron','all','naive'}"], "purpose":"refinement type"},
+        {"name":"heuristic", "kind":"ordered", "type":["char", "choices={'approx_error','sensitivity','both','random', 'all', 'layer_bias'}"], "purpose":"refinement heuristic"},
+        {"name":"x", "kind":"ordered", "type":["numeric", "column"], "purpose":"input point for sensitivity"},
+        {"name":"verbose", "kind":"ordered", "type":["logical"], "purpose":"verbose output"},
+        {"name":"force_bounds", "kind":"ordered", "type":["numeric"], "purpose":"orders at which to re-compute bounds"},
+        {"name":"gamma", "kind":"ordered", "type":["numeric", "scalar"], "purpose":"threshold neuron-wise refinement"}
+     ]
+  },
+
+  "neuralNetwork.verify":
+  {
+     "inputs":
+     [
+        {"name":"obj", "kind":"required", "type":["neuralNetwork"], "purpose":"neuralNetwork"},
+        {"name":"X0", "kind":"ordered", "type":["contSet"], "purpose":"initial set"},
+        {"name":"spec", "kind":"ordered", "type":["specification"], "purpose":"specification"},
+        {"name":"Splits", "kind":"namevalue", "type":["numeric"],"purpose":"max number of recursive splits"},
+        {"name":"RefinementSteps", "kind":"namevalue", "type":["numeric"],"purpose":"number of refinements per step"},
+        {"name":"Verbose", "kind":"namevalue", "type":["logical"],"purpose":"true/false, verbose log"},
+        {"name":"Plot", "kind":"namevalue", "type":["logical"],"purpose":"true/false, plot verification progress"},
+        {"name":"PlotDimsIn", "kind":"namevalue", "type":["numeric"],"purpose":"dimensions to plot in input space"},
+        {"name":"PlotDimsOut", "kind":"namevalue", "type":["numeric"],"purpose":"dimensions to plot in output space"}
+     ]
+  },
+
+  "neuralNetwork.readONNXNetwork":
+  {
+     "inputs":
+     [
+        {"name":"file_path", "kind":"required", "type":["char", "string"], "purpose":"file path"},
+        {"name":"verbose", "kind":"ordered", "type":"logical", "purpose":"verbose output while reading network"},
+        {"name":"inputDataFormats", "kind":"ordered", "type":["char", "choices={'BC','BCSS','BSSC','CSS','SSC','BCSSS','BSSSC', 'CSSS','SSSC','TBC','BCT','BTC','1BC','T1BC','TBCSS','TBCSSS'}"], "purpose":"dimensons of input"},
+        {"name":"outputDataFormats", "kind":"ordered", "type":["char", "choices={'BC','BCSS','BSSC','CSS','SSC','BCSSS','BSSSC', 'CSSS','SSSC','TBC','BCT','BTC','1BC','T1BC','TBCSS','TBCSSS'}"], "purpose":"dimensions of output"},
+        {"name":"targetNetwork", "kind":"ordered", "type":["char", "choices={'dagnetwork', 'dlnetwork'}"], "purpose":"target network from DLT"}
+     ],
+     "outputs": [
+         {"name":"nn", "type":"neuralNetwork"}
+     ]
+  },
+
+  "neuralNetwork.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"NrInputs", "kind":"namevalue", "type":["numeric"],"purpose":"number of input neurons"},
+        {"name":"NrOutputs", "kind":"namevalue", "type":["numeric"],"purpose":"number of output neurons"},
+        {"name":"ActivationFun", "kind":"namevalue", "type":["char", "choices={'relu', 'sigmoid', 'tanh'}"],"purpose":"activation function"},
+        {"name":"NrLayers", "kind":"namevalue", "type":["numeric"],"purpose":"number of layers"},
+        {"name":"NrHiddenNeurons", "kind":"namevalue", "type":["numeric"],"purpose":"number of neurons in hidden layers"}
+     ],
+     "outputs": [
+         {"name":"nn", "type":"neuralNetwork"}
+     ]
+  },
+
+  "neuralNetwork.getNormalForm":
+  {
+     "inputs": [],
+     "outputs": [
+         {"name":"nn_normal", "type":"neuralNetwork"}
+     ]
+  },
+
+  "neuralNetwork.computeReducedNetwork":
+  {
+     "inputs":
+     [
+        {"name":"obj", "kind":"required", "type":["neuralNetwork"],"purpose":"neuralNetwork"},
+        {"name":"S", "kind":"required", "type":["contSet"],"purpose":"input set"},
+        {"name":"BucketType", "kind":"namevalue", "type":["char", "choices={'static','dynamic'}"],"purpose":"bucket type"},
+        {"name":"BucketTol", "kind":"namevalue", "type":["numeric"],"purpose":"bucket tolerance"},
+        {"name":"ReductionRate", "kind":"namevalue", "type":["numeric"],"purpose":"max. rate of remaining neurons"},
+        {"name":"InputCompression", "kind":"namevalue", "type":["numeric"],"purpose":"whether input set should be compressed "},
+        {"name":"Verbose", "kind":"namevalue", "type":["numeric"],"purpose":"verbose output"},
+        {"name":"Plot", "kind":"namevalue", "type":["numeric"],"purpose":"whether information should be plotted"},
+        {"name":"MinSearches", "kind":"namevalue", "type":["numeric"],"purpose":"min searches of binary search algorithm"}
+     ],
+     "outputs": [
+         {"name":"nn_red", "type":"neuralNetwork"},
+         {"name":"S", "type":"polyZonotope"}
+     ]
+  },
+
+  "neuralNetwork.explain":
+  {
+     "inputs":
+     [
+        {"name":"obj", "kind":"required", "type":["neuralNetwork"],"purpose":"neuralNetwork"},
+        {"name":"x", "kind":"required", "type":["numeric"],"purpose":"input"},
+        {"name":"target", "kind":"required", "type":["numeric"],"purpose":"target class"},
+        {"name":"epsilon", "kind":"required", "type":["numeric"],"purpose":"noise radius"},
+        {"name":"Verbose", "kind":"namevalue", "type":["logical"],"purpose":"verbose output"},
+        {"name":"Method", "kind":"namevalue", "type":["char", "choices={'standard','abstract+refine'}"],"purpose":"main method to compute explanation"},
+        {"name":"FeatOrder", "kind":"namevalue", "type":["char", "choices={'sensitivity','in-order','<numeric feature order>'}"],"purpose":"method to determine order to process the features"},
+        {"name":"RefineMethod", "kind":"namevalue", "type":["char", "choices={'all','sensitivity','rand'}"],"purpose":"method to refine abstract network"},
+        {"name":"InputSize", "kind":"namevalue", "type":["numeric"],"purpose":"size of the input"},
+        {"name":"RefinementSteps", "kind":"namevalue", "type":["numeric"],"purpose":"refinement steps, e.g. [0.1, 0.2, ...]"},
+        {"name":"BucketType", "kind":"namevalue", "type":["char", "choices={'static','dynamic'}"],"purpose":"bucket type for reduction"},
+        {"name":"OutputThreshold", "kind":"namevalue", "type":["numeric"],"purpose":"Output threshold for regression tasks"},
+        {"name":"Timeout", "kind":"namevalue", "type":["numeric"],"purpose":"timeout for explanation computation"}
+     ],
+     "outputs": [
+         {"name":"nn_red", "type":"neuralNetwork"},
+         {"name":"S", "type":"polyZonotope"}
+     ]
+  },
+
+  "neuralNetwork.getInputNeuronOrder":
+  {
+     "inputs":
+     [
+        {"name":"obj", "kind":"required", "type":["neuralNetwork"],"purpose":"neuralNetwork"},
+        {"name":"Method", "kind":"required", "type":["char", "choices={'in-order','sensitivity','snake'}"],"purpose":"main method to compute neuron order"},
+        {"name":"x", "kind":"ordered", "type":["numeric"],"purpose":"input point x"},
+        {"name":"inputSize", "kind":"ordered", "type":["numeric"],"purpose":"input size (H,W,C)"}
+     ],
+     "outputs": [
+         {"name":"neuronOrder", "type":["inferredFrom=x"]}
+     ]
+  }
+
+}

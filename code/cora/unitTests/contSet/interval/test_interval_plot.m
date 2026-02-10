@@ -1,0 +1,163 @@
+function res = test_interval_plot
+% test_interval_plot - unit test function of plot; this function aims
+%    to go through many variations of input arguments
+%    note: only run-time errors checked
+%
+% Syntax:
+%    res = test_interval_plot
+%
+% Inputs:
+%    -
+%
+% Outputs:
+%    res - true/false
+%
+% Other m-files required: none
+% Subfunctions: none
+% MAT-files required: none
+%
+% See also: -
+
+% Authors:       Mark Wetzlinger
+% Written:       04-August-2020
+% Last update:   08-May-2023 (TL, added plotted point checks)
+% Last revision: ---
+
+% ------------------------------ BEGIN CODE -------------------------------
+
+I = interval([1;1;2],[3;4;7]);
+
+try
+    % try all variations in plotting
+    figure;
+    
+    % one argument: object
+    plot(I);
+    
+    % two arguments: object, dimensions
+    plot(I,1);
+    plot(I,[1,2]);
+    plot(I,[2,3]);
+    
+    % three arguments: object, dimensions, linespec
+    plot(I,[1,2],'r+');
+    
+    % three arguments: object, dimensions, NVpairs
+    plot(I,[1,2],'LineWidth',2);
+    plot(I,[1,2],'Color',[.6 .6 .6],'LineWidth',2);
+    plot(I,[1,2],'EdgeColor','k','FaceColor',[.8 .8 .8]);
+    
+    % four arguments: object, dimensions, linespec, NVpairs
+    plot(I,[1,2],'r','LineWidth',2);
+    plot(I,[1,2],'r','LineWidth',2,'EdgeColor',[.6 .6 .6]);
+
+    % plot 3d
+    plot(I,[1,2,3]);
+
+    close;
+
+    % check if plotted correctly
+    figure; hold on;
+    ax = gca();
+    colorOrder = ax.ColorOrder;
+    
+    % plot first set
+    plot(I,[1,2]);
+    V = [1 1 3 3 1; 1 4 4 1 1];
+    % check points
+    assert(compareMatrices(V, readVerticesFromFigure(ax.Children(1)),1e-4,'equal',true));
+    % test color
+    if CORA_PLOT_FILLED
+        assert(isequal(colorOrder(1,:), ax.Children(1).EdgeColor));
+        assert(isequal(colorOrder(1,:), ax.Children(1).FaceColor));
+    else
+        assert(isequal(colorOrder(1,:), ax.Children(1).Color));
+    end
+
+    % plot second set
+    plot(I,[1,3]);
+    V = [1 1 3 3 1; 2 7 7 2 2];
+    % check points
+    assert(compareMatrices(V, readVerticesFromFigure(ax.Children(1)),1e-4,'equal',true));
+    % test color
+    if CORA_PLOT_FILLED
+        assert(isequal(colorOrder(2,:), ax.Children(1).EdgeColor));
+        assert(isequal(colorOrder(2,:), ax.Children(1).FaceColor));
+    else
+        assert(isequal(colorOrder(2,:), ax.Children(1).Color));
+    end
+
+    % plot 3d set
+    plot(I,[1,2,3],'Filled',false);
+    V = [ ...
+     1, 3, 3, 1, 1, NaN, 1, 3, 3, 1, 1, NaN, 1, 3, 3, 1, 1, NaN, 1, 3, 3, 1, 1, NaN, 3, 3, 3, 3, 3, NaN, 1, 1, 1, 1, 1, NaN ; ...
+     1, 1, 4, 4, 1, NaN, 1, 1, 4, 4, 1, NaN, 1, 1, 1, 1, 1, NaN, 4, 4, 4, 4, 4, NaN, 1, 4, 4, 1, 1, NaN, 1, 4, 4, 1, 1, NaN ; ...
+     2, 2, 2, 2, 2, NaN, 7, 7, 7, 7, 7, NaN, 2, 2, 7, 7, 2, NaN, 2, 2, 7, 7, 2, NaN, 2, 2, 7, 7, 2, NaN, 2, 2, 7, 7, 2, NaN ; ...
+    ];
+    % check points
+    assert(all(withinTol(V, [ax.Children(1).XData;ax.Children(1).YData;ax.Children(1).ZData]) | isnan(V),"all"));
+    % test color
+    assert(isequal(colorOrder(3,:), ax.Children(1).Color));
+    
+    % close figure
+    close;
+
+    % test interval with infinity bounds
+    figure;
+
+    % set bounds
+    xLim = [1,2]; xlim(xLim);
+    yLim = [-2,3]; ylim(yLim);
+    ax = gca();
+
+    % plot interval with all inf bounds
+    I = interval([-Inf;-Inf],[Inf;Inf]);
+    plot(I);
+
+    % check points
+    V = [ax.Children(1).XData';ax.Children(1).YData'];
+    assert(all(V <= [xLim(1);yLim(1)] | [xLim(2);yLim(2)] <= V,"all"));
+
+    % plot interval with some inf bounds
+    I = interval([1.5;-Inf],[Inf;2]);
+    plot(I);
+
+    % check points at least as large as set limits
+    V = [1.5 1.5 2 2 1.5; -2 2 2 -2 -2];
+    % check points
+    assert(compareMatrices(V, readVerticesFromFigure(ax.Children(1)),1e-4,'equal',true));
+
+    % plot interval outside of xlim
+    I = interval([-Inf;4],[2;Inf]);
+    plot(I);
+
+    % check points
+    V = [1 2 1; 4 4 4];
+    assert(compareMatrices(V, readVerticesFromFigure(ax.Children(1)),1e-4,'equal',true));
+
+    % check single point
+    p = [1.5;1];
+    I = interval(p);
+    plot(I);
+    children = findall(ax);
+    assert(compareMatrices(p, readVerticesFromFigure(children(2)),1e-4,'equal',true));
+
+    % check with given xpos and ypos
+    I = interval(1,2);
+    plot(I,1,'XPos',1,'YPos',2);
+    V = [ 1 1 ; 2 2 ; 1 2 ];
+    assert(compareMatrices(V, readVerticesFromFigure(ax.Children(1)),1e-4,'equal',true));
+
+    % close figure
+    close;
+    
+
+catch ME
+    close;
+    rethrow(ME)
+end
+
+% gather results
+res = true;
+
+% ------------------------------ END OF CODE ------------------------------

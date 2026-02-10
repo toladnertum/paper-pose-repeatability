@@ -1,0 +1,73 @@
+function [res, S] = representsa_(pgon, type, tol, varargin)
+% representsa_ - check if the given polygon represents another set
+%
+% Syntax:
+%    res = representsa_(pgon,type)
+%    [res,S] = representsa_(pgon,type)
+%
+% Inputs:
+%    pgon - polygon
+%    type - char, type which should be checked
+%    tol - tolerance
+%
+% Outputs:
+%    res - logical
+%    S - converted set
+%
+% Other m-files required: none
+% Subfunctions: none
+% MAT-files required: none
+%
+% See also: contSet/representsa
+
+% Authors:       Mark Wetzlinger, Tobias Ladner
+% Written:       13-March-2020
+% Last update:   16-October-2024
+% Last revision: ---
+
+% ------------------------------ BEGIN CODE -------------------------------
+
+% init second output argument (covering all cases with res = false)
+S = [];
+
+% check type
+switch type
+    % contSet ---
+    case 'emptySet'
+        res = isempty(vertices_(pgon));
+        S = emptySet(2);
+
+    case 'fullspace'
+        res = false;
+
+    case 'polygon'
+        % obviously true
+        res = true;
+        S = pgon;
+
+    % other ---
+    case 'point'
+        V = vertices_(pgon);
+        V = unique(V',"rows")';
+        if isempty(V)
+            res = false;
+        else
+            res = all(withinTol(V(:,1),V,tol),"all");
+            if res
+                S = V(:,1);
+            end
+            
+        end
+
+    case 'origin'
+        res = all(withinTol(vertices_(pgon),0,tol),"all");
+        S = [0;0];
+
+    otherwise % throw error
+        throw(CORAerror('CORA:notSupported', sprintf('Type ''%s'' is not supported.',type)));
+
+end
+
+end
+
+% ------------------------------ END OF CODE ------------------------------

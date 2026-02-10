@@ -1,0 +1,269 @@
+{
+  "_schemaVersion": "1.0.0",
+
+  "_comment": "contSet --------------------------------------------------",
+  "contSet.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"admissibleSets", "kind":"ordered", "type":["cell"],"purpose":"cell array of admissable sets"},
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"}
+     ],
+     "outputs": [
+         {"name":"S", "type":"contSet"}
+     ]
+  },
+
+  "contSet.plot":
+  {
+     "inputs":
+     [
+        {"name":"obj", "kind":"required", "type":["contSet"], "purpose":"contSet"},
+        {"name":"dims", "kind":"required", "type":["numeric"],"purpose":"dimensions to plot"},
+        {"name":"lineSpec", "kind":"ordered", "type":["char"],"purpose":"Line Specifications"},
+        {"name":"Color", "kind":"namevalue", "type":["numeric"],"purpose":"Color"},
+        {"name":"FaceColor", "kind":"namevalue", "type":["numeric"],"purpose":"FaceColor"},
+        {"name":"FaceAlpha", "kind":"namevalue", "type":["numeric"],"purpose":"FaceAlpha"},
+        {"name":"EdgeColor", "kind":"namevalue", "type":["numeric"],"purpose":"EdgeColor"},
+        {"name":"EdgeAlpha", "kind":"namevalue", "type":["numeric"],"purpose":"EdgeAlpha"},
+        {"name":"DisplayName", "kind":"namevalue", "type":["char"],"purpose":"DisplayName"},
+        {"name":"HandleVisibility", "kind":"namevalue", "type":["char","choices={'on','off','callback'}"],"purpose":"HandleVisibility"},
+        {"name":"LineWidth", "kind":"namevalue", "type":["numeric"],"purpose":"LineWidth"},
+        {"name":"LineStyle", "kind":"namevalue", "type":["char","choices={'-','--',':','-.'}"],"purpose":"LineStyle"},
+        {"name":"Marker", "kind":"namevalue", "type":["char","choices={'o','+','*','.','x','_','|','square','diamond','^','v','>','<','pentagram','hexagram'}"],"purpose":"Marker"},
+        {"name":"MarkerSize", "kind":"namevalue", "type":["numeric"],"purpose":"MarkerSize"},
+        {"name":"XPos", "kind":"namevalue", "type":["numeric"],"purpose":"position on x-axis"},
+        {"name":"YPos", "kind":"namevalue", "type":["numeric"],"purpose":"position on y-axis"},
+        {"name":"ZPos", "kind":"namevalue", "type":["numeric"],"purpose":"position on z-axis"},
+        {"name":"Filled", "kind":"namevalue", "type":["logical"],"purpose":"Fill plotted set"},
+         
+        {"name":"Splits", "kind":"namevalue", "type":["numeric"],"purpose":"Splits (only for polyZonotope/conZonotope/levelSet)"},
+        {"name":"PlotMethod", "kind":"namevalue", "type":["char","choices={'outer','inner'}"],"purpose":"plotting method (only for levelSets)"}
+     ]
+  },
+
+  "contSet.representsa":
+  {
+     "inputs":
+     [
+        {"name":"obj", "kind":"required", "type":["contSet"], "purpose":"contSet"},
+        {"name":"type", "kind":"required", "type":["char","choices={'capsule','conPolyZono','conHyperplane','convexSet','conZonotope','ellipsoid','halfspace','interval','levelSet','polygon','polytope','polyZonotope','probZonotope','zonoBundle','zonotope','origin','point','hyperplane','emptySet','fullspace','convexSet'}"],"purpose":"type"},
+        {"name":"tol", "kind":"ordered", "type":["numeric"],"purpose":"tolerance"},
+        {"name":"varargin", "kind":"ordered","purpose":"varargin"}
+     ],
+     "outputs": [
+         {"name":"res", "type":"logical"},
+         {"name":"S", "type":"contSet"}
+     ]
+  },
+
+  "contSet.representsa_":
+  {
+     "inputs":
+     [
+        {"name":"obj", "kind":"required", "type":["contSet"], "purpose":"contSet"},
+        {"name":"type", "kind":"required", "type":["char","choices={'capsule','conPolyZono','conHyperplane','convexSet','conZonotope','ellipsoid','halfspace','interval','levelSet','polygon','polytope','polyZonotope','probZonotope','zonoBundle','zonotope','origin','point','hyperplane','emptySet','fullspace','convexSet'}"],"purpose":"type"},
+        {"name":"tol", "kind":"ordered", "type":["numeric"],"purpose":"tolerance"},
+        {"name":"varargin", "kind":"ordered","purpose":"varargin"}
+     ],
+     "outputs": [
+         {"name":"res", "type":"logical"},
+         {"name":"S", "type":"contSet"}
+     ]
+  },
+
+  "_comment": "capsule --------------------------------------------------", 
+  "capsule.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"},
+        {"name":"Center", "kind":"namevalue", "type":["numeric"],"purpose":"center"},
+        {"name":"Radius", "kind":"namevalue", "type":["numeric"],"purpose":"radius"}
+     ],
+     "outputs": [
+         {"name":"C", "type":"capsule"}
+     ]
+  },
+
+  "_comment": "conPolyZono ----------------------------------------------", 
+  "conPolyZono.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"},
+        {"name":"NrGenerators", "kind":"namevalue", "type":["numeric"],"purpose":"number of generators"},
+        {"name":"NrConstraints", "kind":"namevalue", "type":["numeric"],"purpose":"number of constraints"},
+        {"name":"NrFactors", "kind":"namevalue", "type":["numeric"],"purpose":"number of dependent factors"},
+        {"name":"NrIndGenerators", "kind":"namevalue", "type":["numeric"],"purpose":"number of independent generators"}
+     ],
+     "outputs": [
+         {"name":"cPZ", "type":"conPolyZono"}
+     ]
+  },
+
+  "_comment": "conZonotope ----------------------------------------------", 
+  "conZonotope.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"},
+        {"name":"Center", "kind":"namevalue", "type":["numeric"],"purpose":"center of the zonotope"},
+        {"name":"NrGenerators", "kind":"namevalue", "type":["numeric"],"purpose":"number of generators"},
+        {"name":"NrConstraints", "kind":"namevalue", "type":["numeric"],"purpose":"number of constraints"}
+     ],
+     "outputs": [
+         {"name":"cZ", "type":"conZonotope"}
+     ]
+  },
+
+  "_comment": "ellipsoid ------------------------------------------------", 
+  "ellipsoid.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"},
+        {"name":"Center", "kind":"namevalue", "type":["numeric"],"purpose":"center"},
+        {"name":"IsDegenerate", "kind":"namevalue", "type":["logical"],"purpose":"degeneracy"}
+     ],
+     "outputs": [
+         {"name":"E", "type":"ellipsoid"}
+     ]
+  },
+
+  "_comment": "emptySet -------------------------------------------------", 
+  "emptySet.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"}
+     ],
+     "outputs": [
+         {"name":"O", "type":"emptySet"}
+     ]
+  },
+
+  "_comment": "fullspace ------------------------------------------------", 
+  "fullspace.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"}
+     ],
+     "outputs": [
+         {"name":"fs", "type":"fullspace"}
+     ]
+  },
+
+  "_comment": "interval -------------------------------------------------", 
+  "interval.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"}
+     ],
+     "outputs": [
+         {"name":"I", "type":"interval"}
+     ]
+  },
+
+  "_comment": "levelSet -------------------------------------------------", 
+  "levelSet.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"},
+        {"name":"NrEquations", "kind":"namevalue", "type":["numeric"],"purpose":"number of equations"},
+        {"name":"CompOps", "kind":"namevalue", "type":["cell"],"purpose":"subset of {'==','<=','<'}"},
+        {"name":"MaxExponent", "kind":"namevalue", "type":["numeric"],"purpose":"maximum exponent in equations"}
+     ],
+     "outputs": [
+         {"name":"ls", "type":"levelSet"}
+     ]
+  },
+
+  "_comment": "polytope -------------------------------------------------", 
+  "polytope.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"},
+        {"name":"NrConstraints", "kind":"namevalue", "type":["numeric"],"purpose":"number of constraints"},
+        {"name":"IsDegenerate", "kind":"namevalue", "type":["logical"],"purpose":"is degenerate?"},
+        {"name":"IsBounded", "kind":"namevalue", "type":["logical"],"purpose":"is bounded?"}
+     ],
+     "outputs": [
+         {"name":"P", "type":"polytope"}
+     ]
+  },
+
+  "_comment": "polyZonotope ---------------------------------------------", 
+  "polyZonotope.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"},
+        {"name":"NrGenerators", "kind":"namevalue", "type":["numeric"],"purpose":"number of generators"},
+        {"name":"NrFactors", "kind":"namevalue", "type":["numeric"],"purpose":"number of dependent factors"},
+        {"name":"NrIndGenerators", "kind":"namevalue", "type":["numeric"],"purpose":"number of independent generators"}
+     ],
+     "outputs": [
+         {"name":"pZ", "type":"polyZonotope"}
+     ]
+  },
+
+  "polyZonotope.relaxExponents":
+  {
+     "inputs":
+     [
+        {"name":"polyZonotope", "kind":"required", "type":["polyZonotope"],"purpose":"polyZonotope object"},
+         {"name":"eta", "kind":"ordered", "type":["numeric"],"purpose":"exponent threshold"},
+         {"name":"method", "kind":"ordered", "type":["char", "choices={'greedy','all'}"],"purpose":"method"}
+     ],
+     "outputs": [
+         {"name":"pZ_relax", "type":"polyZonotope"},
+         {"name":"dig", "type":"digraph"}
+     ]
+  },
+
+  "_comment": "taylm ----------------------------------------------------", 
+  "taylm.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"}
+     ],
+     "outputs": [
+         {"name":"tay", "type":"taylm"}
+     ]
+  },
+
+  "_comment": "zonoBundle -----------------------------------------------", 
+  "zonoBundle.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"},
+        {"name":"NrZonotopes", "kind":"namevalue", "type":["numeric"],"purpose":"number of zonotopes in bundle"}
+     ],
+     "outputs": [
+         {"name":"zB", "type":"zonoBundle"}
+     ]
+  },
+
+  "_comment": "zonotope -------------------------------------------------", 
+  "zonotope.generateRandom":
+  {
+     "inputs":
+     [
+        {"name":"Dimension", "kind":"namevalue", "type":["numeric"],"purpose":"dimension"},
+        {"name":"Center", "kind":"namevalue", "type":["numeric"],"purpose":"static center"},
+        {"name":"NrGenerators", "kind":"namevalue", "type":["numeric"],"purpose":"number of generators"},
+        {"name":"Distribution", "kind":"namevalue", "type":["char", "choices={'uniform', 'exp', 'gamma'}"],"purpose":"distribution for generators"}
+     ],
+     "outputs": [
+         {"name":"Z", "type":"zonotope"}
+     ]
+  }
+
+}
