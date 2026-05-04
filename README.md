@@ -4,7 +4,7 @@
 This folder contains a repeatability package for:
 
 - Paper: `Perception with Guarantees: Certified Pose Estimation via Reachability Analysis`
-- Venue: `under review`
+- Venue: `Proceedings of the 38th International Conference on Computer Aided Verification (CAV 2026)`
 
 ## Folder structure
 
